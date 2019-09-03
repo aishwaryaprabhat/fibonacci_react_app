@@ -178,4 +178,6 @@ COPY ./default.conf /etc/nginx/conf.d/default.conf
 ```
 
 
-## 
+## Multi-Container Production Deployment
+
+![](readme_images/overall.png)
