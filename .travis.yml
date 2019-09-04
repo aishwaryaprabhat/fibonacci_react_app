@@ -21,3 +21,17 @@ after_success:
   - docker push aish/fib-nginx 
   - docker push aish/fib-server
   - docker push aish/fib-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: ap-southeast-1
+  app: fib-multi-container
+  env: FibMultiContainer-env
+  bucket_name: elasticbeanstalk-ap-southeast-1-015820542059
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id:
+    secure: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY

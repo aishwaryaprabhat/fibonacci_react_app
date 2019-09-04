@@ -180,4 +180,116 @@ COPY ./default.conf /etc/nginx/conf.d/default.conf
 
 ## Multi-Container Production Deployment
 
+### Overall Plan/Project Flow
 ![](readme_images/overall.png)
+
+### How AWS Elastic Beanstalk 'runs' containers
+
+Elasic beanstalk delegates container hosting to AWS Elastic Container Service. So we write a file called Dockerrun.aws.json which is very similar to docker-compose.yml.
+
+![](readme_images/aws.png)
+
+`Dockerrun.aws.json`
+
+```
+ {
+	"AWSEBDockerrunVersion": 2,
+	"containerDefinitions": [
+		{
+			"name":"client",
+			"image":"aish/fib-client",
+			"hostname":"client_api",
+			"essential":false
+		},
+
+		{
+			"name":"server",
+			"image":"aish/fib-server",
+			"hostname":"api",
+			"essential":false
+		},
+
+		{
+			"name":"worker",
+			"image":"aish/fib-worker",
+			"hostname":"worker",
+			"essential":false
+		},
+
+		{
+			"name":"nginx",
+			"image":"aish/fib-nginx",
+			"hostname":"nginx",
+			"essential":true,
+			"portMappings": [
+				{
+					"hostport":80,
+					"containerPort":80
+				}	
+			],
+			"links": ["client","server"]
+		}
+	]
+}
+```
+
+
+### Architecture on Elastic Beanstalk
+ 
+![](readme_images/aws2.png)
+ 
+### Why AWS Elastic Cache
+
+![](readme_images/aws3.png)
+ 
+### Security Group Configuration for App
+
+![](readme_images/aws4.png)
+
+### Travis Config File
+
+```
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t aish/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true aish/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t aish/fib-client ./client
+  - docker build -t aish/fib-nginx ./nginx
+  - docker build -t aish/fib-server ./server
+  - docker build -t aish/fib-worker ./worker
+
+  #Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_LOGIN" --password-stdin
+  #Take those images and push them to docker hub
+  - docker push aish/fib-client 
+  - docker push aish/fib-nginx 
+  - docker push aish/fib-server
+  - docker push aish/fib-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: ap-southeast-1
+  app: fib-multi-container
+  env: FibMultiContainer-env
+  bucket_name: elasticbeanstalk-ap-southeast-1-015820542059
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id:
+    secure: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
+
+```
+
+### 
+
+ 
+ 
