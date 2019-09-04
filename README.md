@@ -1,4 +1,7 @@
 ## Overview
+
+[![Build Status](https://travis-ci.org/aishwaryaprabhat/fibonacci_react_app.svg?branch=master)](https://travis-ci.org/aishwaryaprabhat/fibonacci_react_app)
+
 ### Final Result
 ![](readme_images/app.png)
 
