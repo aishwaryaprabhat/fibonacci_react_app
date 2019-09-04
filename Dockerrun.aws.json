@@ -5,6 +5,7 @@
 			"name":"client",
 			"image":"aish/fib-client",
 			"hostname":"client_api",
+			"memory": 128,
 			"essential":false
 		},
 
@@ -12,6 +13,7 @@
 			"name":"server",
 			"image":"aish/fib-server",
 			"hostname":"api",
+			"memory": 128,
 			"essential":false
 		},
 
@@ -19,6 +21,7 @@
 			"name":"worker",
 			"image":"aish/fib-worker",
 			"hostname":"worker",
+			"memory": 128,
 			"essential":false
 		},
 
@@ -26,6 +29,7 @@
 			"name":"nginx",
 			"image":"aish/fib-nginx",
 			"hostname":"nginx",
+			"memory": 128,
 			"essential":true,
 			"portMappings": [
 				{
